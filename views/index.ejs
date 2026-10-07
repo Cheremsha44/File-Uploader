@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html class="h-full" lang="en">
 <head>
+    <!-- Google Fonts: Cinzel, Plus Jakarta Sans, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!--<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">-->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/output.css">
     <meta charset="UTF-8">
     <title><%= title %></title>
 </head>
-<body>
+<body class="min-h-screen flex flex-col bg-stone-50 text-stone-800 antialiased">
   <%- include('partials/header') %>
-  <main>
-    <%- include('partials/content') %>
-  </main>
+  <%- include('partials/content') %>
   <%- include('partials/footer') %>
 </body>
 </html>
