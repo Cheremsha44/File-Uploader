@@ -1,3 +1,5 @@
 node_modules
 .env
 public/css/output.css
+
+/generated/prisma
