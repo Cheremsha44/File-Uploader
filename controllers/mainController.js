@@ -4,7 +4,13 @@ const { prisma } = require('../lib/prisma');
 const bcrypt = require('bcryptjs');
 
 exports.home = async (req, res) => {
-  res.render('index', { title: 'Home', user: req.user });
+  const files = req.user
+    ? await prisma.file.findMany({
+        where: { userId: req.user.id },
+        orderBy: { createdAt: 'desc' },
+      })
+    : [];
+  res.render('index', { title: 'Home', user: req.user, files });
 };
 
 // authorization\registration
@@ -16,21 +22,44 @@ exports.register = (req, res) => {
 };
 
 exports.registerPost = async (req, res) => {
-  const { email, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
-  prisma.user
-    .create({ data: { email, password_hash: hashedPassword } })
-    .then(() => res.redirect('/login'))
-    .catch((err) => {
-      console.error(err);
-      res.redirect('/register');
+  const { email, password, confirmPassword } = req.body;
+  if (password !== confirmPassword) {
+    console.error('Passwords do not match');
+    return res.redirect('/register');
+  }
+  if (password.length < 6) {
+    return res.redirect('/register');
+  }
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await prisma.user.create({
+      data: {
+        email,
+        password_hash: hashedPassword,
+      },
     });
+
+    res.redirect('/login');
+  } catch (err) {
+    console.error('Registration error:', err);
+    res.redirect('/register');
+  }
 };
 exports.loginPost = (req, res, next) => {
   passport.authenticate('local', {
     successRedirect: '/',
     failureRedirect: '/login',
   })(req, res, next);
+};
+
+exports.logOut = (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect('/');
+  });
 };
 // ================================================
 exports.upload = async (req, res) => {

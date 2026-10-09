@@ -28,8 +28,78 @@
 
       <!-- Right Action Area -->
       <div class="flex items-center gap-3 sm:gap-4">
-
         <!-- ==================== STATE 1: GUEST (Not Logged In) ==================== -->
+        <% if (locals.user) {%>
+            <div class="hidden sm:flex flex-col items-end text-xs text-stone-500 mr-2">
+              <div class="flex gap-1 font-mono">
+                <span class="text-stone-700 font-semibold">4.2 GB</span>
+                <span>/ 10 GB</span>
+              </div>
+              <div class="w-24 h-1.5 bg-stone-200 rounded-full mt-1 overflow-hidden border border-stone-300/40">
+                <div class="bg-amber-600 h-full w-[42%] rounded-full"></div>
+              </div>
+            </div>
+
+            <a href="#upload" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-950 bg-amber-200/90 hover:bg-amber-300 border border-amber-300/80 rounded-lg shadow-xs transition-all active:scale-95">
+              <svg class="w-4 h-4 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2">
+                <path d="M12 15V3m0 0l-4 4m4-4l4 4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Upload
+            </a>
+            <!-- User Profile Dropdown -->
+            <div class="relative inline-block text-left" id="user-menu-wrapper">
+
+              <!-- Trigger Button (Avatar) -->
+              <button
+                type="button"
+                id="user-menu-button"
+                class="w-9 h-9 rounded-full bg-amber-200 border border-amber-400/60 flex items-center justify-center font-semibold text-amber-900 text-sm shadow-xs hover:bg-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 transition-all cursor-pointer">
+                <!-- Первая буква имени/email юзера (например из ejs: <%= user.email[0].toUpperCase() %>) -->
+                R
+              </button>
+
+              <!-- Dropdown Menu -->
+              <div
+                id="user-menu"
+                class="hidden absolute right-0 mt-2 w-56 rounded-2xl bg-stone-100 border border-amber-200/80 shadow-xl py-2 text-stone-800 z-50 transition-all transform origin-top-right font-sans">
+
+                <!-- User Info Header -->
+                <div class="px-4 py-2.5 border-b border-amber-200/50">
+                  <p class="text-xs text-stone-400 font-mono">Signed in as</p>
+                  <p class="text-sm font-semibold text-stone-900 truncate font-sans">caravaner@desert.com</p>
+                </div>
+
+                <!-- Menu Items -->
+                <div class="py-1">
+                  <a href="/dashboard" class="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-stone-700 hover:bg-amber-100/60 hover:text-amber-900 transition-colors">
+                    <svg class="w-4 h-4 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    My Storage
+                  </a>
+
+                  <a href="/settings" class="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-stone-700 hover:bg-amber-100/60 hover:text-amber-900 transition-colors">
+                    <svg class="w-4 h-4 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    Account Settings
+                  </a>
+                </div>
+
+                <!-- Logout Option -->
+                <div class="border-t border-amber-200/50 pt-1 mt-1">
+                  <!-- В идеале делать логаут через POST запрос/форму для безопасности, но если у тебя GET роут /log-out — стилизуй ссылку -->
+                  <a href="/log-out" class="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-rose-700 hover:bg-rose-50 transition-colors">
+                    <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    Log Out
+                  </a>
+                </div>
+
+              </div>
+            </div>
+        <% } else {%>
         <div class="flex items-center gap-2 sm:gap-3">
           <a href="/login" class="px-3.5 py-2 text-sm font-medium text-stone-700 hover:text-amber-900 hover:bg-amber-100/50 rounded-lg transition-colors">
             Sign In
@@ -38,33 +108,27 @@
             Sign Up
           </a>
         </div>
-
-        <!-- ==================== STATE 2: AUTHENTICATED (Commented out for reference) ==================== -->
-        <!--
-        <div class="hidden sm:flex flex-col items-end text-xs text-stone-500 mr-2">
-          <div class="flex gap-1 font-mono">
-            <span class="text-stone-700 font-semibold">4.2 GB</span>
-            <span>/ 10 GB</span>
-          </div>
-          <div class="w-24 h-1.5 bg-stone-200 rounded-full mt-1 overflow-hidden border border-stone-300/40">
-            <div class="bg-amber-600 h-full w-[42%] rounded-full"></div>
-          </div>
-        </div>
-
-        <a href="#upload" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-950 bg-amber-200/90 hover:bg-amber-300 border border-amber-300/80 rounded-lg shadow-xs transition-all active:scale-95">
-          <svg class="w-4 h-4 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2">
-            <path d="M12 15V3m0 0l-4 4m4-4l4 4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Upload
-        </a>
-
-        <div class="w-9 h-9 rounded-full bg-amber-200 border border-amber-400/60 flex items-center justify-center font-semibold text-amber-900 text-sm shadow-xs">
-          R
-        </div>
-        -->
-
+        <%}%>
       </div>
 
     </div>
   </div>
 </header>
+<script>
+  const userMenuButton = document.getElementById('user-menu-button');
+  const userMenu = document.getElementById('user-menu');
+  const userMenuWrapper = document.getElementById('user-menu-wrapper');
+
+  if (userMenuButton && userMenu) {
+    userMenuButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!userMenuWrapper.contains(e.target)) {
+        userMenu.classList.add('hidden');
+      }
+    });
+  }
+</script>
