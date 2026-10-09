@@ -33,3 +33,7 @@ exports.loginPost = (req, res, next) => {
   })(req, res, next);
 };
 // ================================================
+exports.upload = async (req, res) => {
+  console.log(req.file, req.user);
+  res.redirect('/');
+};

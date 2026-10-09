@@ -1,0 +1,296 @@
+<!-- Dashboard: Hyprland / Tiling Workspace (Desert Theme) -->
+<main class="flex-1 bg-stone-50 text-stone-800 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-8">
+
+  <!-- 1. TOP CONTROL BAR / TOOLBAR -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-amber-200/60">
+
+    <!-- Left: Breadcrumbs / Current Path -->
+    <nav class="flex items-center gap-2 text-sm font-mono">
+      <a href="/dashboard" class="flex items-center gap-1.5 text-stone-900 font-semibold hover:text-amber-800 transition-colors">
+        <svg class="w-4 h-4 text-amber-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        <span>oasis</span>
+      </a>
+      <span class="text-stone-400">/</span>
+      <span class="text-stone-500">my-artifacts</span>
+    </nav>
+
+    <!-- Right: Search & Action Buttons -->
+    <div class="flex flex-wrap items-center gap-3">
+
+      <!-- Search Input -->
+      <div class="relative flex-1 sm:w-64">
+        <input
+          type="text"
+          placeholder="Search artifacts..."
+          class="w-full pl-9 pr-3.5 py-2 text-xs bg-stone-100 border border-stone-300/80 rounded-xl text-stone-800 placeholder-stone-400 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all font-sans"
+        />
+        <svg class="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        </svg>
+      </div>
+
+      <!-- Action: New Folder -->
+      <button
+        onclick="document.getElementById('new-folder-modal').showModal()"
+        class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium text-stone-700 bg-stone-100 hover:bg-amber-100/60 border border-stone-300/80 rounded-xl transition-all cursor-pointer">
+        <svg class="w-4 h-4 text-amber-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        New Folder
+      </button>
+
+      <!-- Action: Upload File Trigger -->
+      <label class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-amber-950 bg-amber-300 hover:bg-amber-400 border border-amber-400/80 rounded-xl shadow-2xs transition-all active:scale-95 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Upload File
+        <input type="file" class="hidden" onchange="this.form.submit()" />
+      </label>
+
+    </div>
+  </div>
+
+
+  <!-- 2. DRAG & DROP ALTAR (UPLOAD ZONE) -->
+  <section class="relative">
+    <form action="/upload" method="POST" enctype="multipart/form-data" id="upload-form">
+      <div
+        id="dropzone"
+        class="border-2 border-dashed border-amber-300/80 bg-amber-50/30 hover:bg-amber-100/30 hover:border-amber-400 rounded-2xl p-8 text-center transition-all cursor-pointer group flex flex-col items-center justify-center relative overflow-hidden">
+
+        <input type="file" name="file" id="file-input" onchange="this.form.submit()" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+
+        <div class="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-300/60 flex items-center justify-center text-amber-800 mb-3 group-hover:scale-110 transition-transform shadow-inner">
+          <svg class="w-6 h-6 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="1.8">
+            <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+            <path d="M12 12v9"/><path d="m16 16-4-4-4 4"/>
+          </svg>
+        </div>
+
+        <h3 class="font-serif text-lg font-semibold text-stone-900 mb-1">
+          Drag & drop your files here, or <span class="text-amber-800 underline underline-offset-2">browse</span>
+        </h3>
+        <p class="text-xs text-stone-500 font-mono">
+          Supports image, document, archive formats up to 50MB
+        </p>
+      </div>
+    </form>
+  </section>
+
+
+  <!-- 3. FOLDERS SECTION (Tiling Grid) -->
+  <section class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 class="font-serif text-lg font-bold text-stone-900 tracking-tight flex items-center gap-2">
+        <span>Folders</span>
+        <span class="text-xs font-mono font-normal text-stone-400 bg-stone-200/60 px-2 py-0.5 rounded-full">3</span>
+      </h2>
+    </div>
+
+    <!-- Folder Tiles -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+
+      <!-- Folder Tile 1 -->
+      <a href="/folders/1" class="group bg-stone-100 border border-amber-200/70 hover:border-amber-300 rounded-2xl p-4 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between h-32 relative">
+        <div class="flex items-start justify-between">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300/50 flex items-center justify-center text-amber-800 group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5 fill-amber-200/60 stroke-current" viewBox="0 0 24 24" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <span class="text-xs font-mono text-stone-400">14 files</span>
+        </div>
+        <div>
+          <h3 class="font-medium text-stone-800 truncate group-hover:text-amber-900 transition-colors">Work Documents</h3>
+          <p class="text-xs text-stone-400 font-mono mt-0.5">128.4 MB</p>
+        </div>
+      </a>
+
+      <!-- Folder Tile 2 -->
+      <a href="/folders/2" class="group bg-stone-100 border border-amber-200/70 hover:border-amber-300 rounded-2xl p-4 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between h-32 relative">
+        <div class="flex items-start justify-between">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300/50 flex items-center justify-center text-amber-800 group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5 fill-amber-200/60 stroke-current" viewBox="0 0 24 24" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <span class="text-xs font-mono text-stone-400">8 files</span>
+        </div>
+        <div>
+          <h3 class="font-medium text-stone-800 truncate group-hover:text-amber-900 transition-colors">Desert Photos</h3>
+          <p class="text-xs text-stone-400 font-mono mt-0.5">45.1 MB</p>
+        </div>
+      </a>
+
+      <!-- Folder Tile 3 -->
+      <a href="/folders/3" class="group bg-stone-100 border border-amber-200/70 hover:border-amber-300 rounded-2xl p-4 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between h-32 relative">
+        <div class="flex items-start justify-between">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300/50 flex items-center justify-center text-amber-800 group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5 fill-amber-200/60 stroke-current" viewBox="0 0 24 24" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <span class="text-xs font-mono text-stone-400">2 files</span>
+        </div>
+        <div>
+          <h3 class="font-medium text-stone-800 truncate group-hover:text-amber-900 transition-colors">Code Backups</h3>
+          <p class="text-xs text-stone-400 font-mono mt-0.5">2.8 MB</p>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+
+  <!-- 4. FILES SECTION (Hyprland Tile Cards) -->
+  <section class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 class="font-serif text-lg font-bold text-stone-900 tracking-tight flex items-center gap-2">
+        <span>Recent Files</span>
+        <span class="text-xs font-mono font-normal text-stone-400 bg-stone-200/60 px-2 py-0.5 rounded-full">4</span>
+      </h2>
+
+      <!-- Sort Options -->
+      <div class="flex items-center gap-2 text-xs font-mono text-stone-500">
+        <span>Sort:</span>
+        <select class="bg-transparent border-none text-stone-800 font-semibold focus:outline-none cursor-pointer">
+          <option>Date added</option>
+          <option>Name</option>
+          <option>Size</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Files Tiling Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+
+      <!-- File Card 1 (Image) -->
+      <div class="group bg-stone-100 border border-stone-200/80 hover:border-amber-300 rounded-2xl p-4 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between h-48 relative">
+        <!-- Top: Type Badge & Action -->
+        <div class="flex items-start justify-between">
+          <div class="p-2 rounded-xl bg-amber-100 text-amber-900">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+            </svg>
+          </div>
+
+          <!-- Actions Menu -->
+          <div class="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+            <a href="#" title="Download" class="p-1.5 text-stone-500 hover:text-amber-900 hover:bg-stone-200/60 rounded-lg transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </a>
+            <form action="/files/1?_method=DELETE" method="POST" class="inline">
+              <button title="Delete" class="p-1.5 text-stone-400 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Middle: Preview or Details -->
+        <div class="my-auto py-2">
+          <h3 class="font-medium text-sm text-stone-800 truncate group-hover:text-amber-900 transition-colors" title="caravan_dune_arch.png">
+            caravan_dune_arch.png
+          </h3>
+          <p class="text-xs font-mono text-stone-400 mt-1">PNG Image</p>
+        </div>
+
+        <!-- Bottom: Size & Date -->
+        <div class="flex items-center justify-between text-xs font-mono text-stone-400 pt-2 border-t border-stone-200/60">
+          <span>3.8 MB</span>
+          <span>Oct 08</span>
+        </div>
+      </div>
+
+      <!-- File Card 2 (Document) -->
+      <div class="group bg-stone-100 border border-stone-200/80 hover:border-amber-300 rounded-2xl p-4 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between h-48 relative">
+        <div class="flex items-start justify-between">
+          <div class="p-2 rounded-xl bg-stone-200 text-stone-700">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </div>
+          <div class="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+            <a href="#" title="Download" class="p-1.5 text-stone-500 hover:text-amber-900 hover:bg-stone-200/60 rounded-lg transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </a>
+            <form action="/files/2?_method=DELETE" method="POST" class="inline">
+              <button title="Delete" class="p-1.5 text-stone-400 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="my-auto py-2">
+          <h3 class="font-medium text-sm text-stone-800 truncate group-hover:text-amber-900 transition-colors" title="odin_project_notes.pdf">
+            odin_project_notes.pdf
+          </h3>
+          <p class="text-xs font-mono text-stone-400 mt-1">PDF Document</p>
+        </div>
+
+        <div class="flex items-center justify-between text-xs font-mono text-stone-400 pt-2 border-t border-stone-200/60">
+          <span>1.2 MB</span>
+          <span>Oct 07</span>
+        </div>
+      </div>
+
+      <!-- File Card 3 (Archive) -->
+      <div class="group bg-stone-100 border border-stone-200/80 hover:border-amber-300 rounded-2xl p-4 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between h-48 relative">
+        <div class="flex items-start justify-between">
+          <div class="p-2 rounded-xl bg-amber-200/80 text-amber-950">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/>
+            </svg>
+          </div>
+          <div class="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+            <a href="#" title="Download" class="p-1.5 text-stone-500 hover:text-amber-900 hover:bg-stone-200/60 rounded-lg transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </a>
+            <form action="/files/3?_method=DELETE" method="POST" class="inline">
+              <button title="Delete" class="p-1.5 text-stone-400 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="my-auto py-2">
+          <h3 class="font-medium text-sm text-stone-800 truncate group-hover:text-amber-900 transition-colors" title="db_backup_2026.zip">
+            db_backup_2026.zip
+          </h3>
+          <p class="text-xs font-mono text-stone-400 mt-1">ZIP Archive</p>
+        </div>
+
+        <div class="flex items-center justify-between text-xs font-mono text-stone-400 pt-2 border-t border-stone-200/60">
+          <span>14.5 MB</span>
+          <span>Oct 05</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+
+<!-- 5. NEW FOLDER MODAL (HTML Dialog) -->
+<dialog id="new-folder-modal" class="rounded-2xl border border-amber-200 shadow-2xl bg-stone-100 p-6 backdrop:bg-stone-900/40 backdrop:backdrop-blur-xs max-w-sm w-full font-sans">
+  <form action="/folders" method="POST" class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h3 class="font-serif text-lg font-bold text-stone-900">Create New Folder</h3>
+      <button type="button" onclick="document.getElementById('new-folder-modal').close()" class="text-stone-400 hover:text-stone-600 text-sm font-mono cursor-pointer">✕</button>
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-stone-700 uppercase tracking-wider mb-1">Folder Name</label>
+      <input type="text" name="name" required placeholder="e.g. Project Assets" class="w-full px-3.5 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-800 focus:outline-none focus:border-amber-500 font-sans" />
+    </div>
+    <div class="flex items-center justify-end gap-2 pt-2">
+      <button type="button" onclick="document.getElementById('new-folder-modal').close()" class="px-3.5 py-2 text-xs font-medium text-stone-600 hover:bg-stone-200/50 rounded-xl">Cancel</button>
+      <button type="submit" class="px-4 py-2 text-xs font-medium text-amber-950 bg-amber-300 hover:bg-amber-400 rounded-xl border border-amber-400 cursor-pointer">Create</button>
+    </div>
+  </form>
+</dialog>
