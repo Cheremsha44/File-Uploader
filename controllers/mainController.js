@@ -34,6 +34,21 @@ exports.loginPost = (req, res, next) => {
 };
 // ================================================
 exports.upload = async (req, res) => {
-  console.log(req.file, req.user);
-  res.redirect('/');
+  if (!req.file) return res.redirect('/');
+  const { originalname, size, mimetype, path } = req.file;
+  prisma.file
+    .create({
+      data: {
+        name: originalname,
+        size: size,
+        mimetype: mimetype,
+        path: path,
+        owner: { connect: { id: req.user.id } },
+      },
+    })
+    .then(() => res.redirect('/'))
+    .catch((err) => {
+      console.error(err);
+      res.redirect('/');
+    });
 };
