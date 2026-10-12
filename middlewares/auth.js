@@ -1,13 +1,6 @@
-// function requireMinStatus(minStatusId) {
-//   return (req, res, next) => {
-//     if (!req.user) {
-//       return res.status(401).send('Не авторизован');
-//     }
-//     if (req.user.status_id < minStatusId) {
-//       return res.status(403).send('Недостаточно прав');
-//     }
-//     next();
-//   };
-// }
+function autorized(req, res, next) {
+  if (!req.user) return res.redirect('/login');
+  next();
+}
 
-// module.exports = { requireMinStatus };
+module.exports = { autorized };

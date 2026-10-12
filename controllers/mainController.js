@@ -1,16 +1,31 @@
-//const db = require('../db/queries')
 const passport = require('../auth/passport');
 const { prisma } = require('../lib/prisma');
 const bcrypt = require('bcryptjs');
+const fs = require('node:fs');
 
 exports.home = async (req, res) => {
-  const files = req.user
-    ? await prisma.file.findMany({
-        where: { userId: req.user.id },
-        orderBy: { createdAt: 'desc' },
-      })
-    : [];
-  res.render('index', { title: 'Home', user: req.user, files });
+  let files = [];
+  let folders = [];
+
+  if (req.user) {
+    files = await prisma.file.findMany({
+      where: { userId: req.user.id, folderId: null },
+      orderBy: { createdAt: 'desc' },
+    });
+    folders = await prisma.folder.findMany({
+      where: { userId: req.user.id },
+      orderBy: { createdAt: 'desc' },
+      include: { _count: { select: { files: true } } },
+    });
+  }
+
+  res.render('index', {
+    title: 'Home',
+    user: req.user,
+    currentFolder: null,
+    folders,
+    files,
+  });
 };
 
 // authorization\registration
@@ -61,7 +76,8 @@ exports.logOut = (req, res) => {
     res.redirect('/');
   });
 };
-// ================================================
+// File==File==File==File==File==File==File==File==File==File==File==
+// Upload file
 exports.upload = async (req, res) => {
   if (!req.file) return res.redirect('/');
   const { originalname, size, mimetype, path } = req.file;
@@ -76,6 +92,198 @@ exports.upload = async (req, res) => {
       },
     })
     .then(() => res.redirect('/'))
+    .catch((err) => {
+      console.error(err);
+      res.redirect('/');
+    });
+};
+// Delete file
+exports.deleteFile = async (req, res) => {
+  const fileId = parseInt(req.params.id, 10);
+
+  if (Number.isNaN(fileId)) {
+    return res.status(400).send('Invalid file ID');
+  }
+
+  try {
+    const file = await prisma.file.findFirst({
+      where: {
+        id: fileId,
+        userId: req.user.id,
+      },
+    });
+    if (!file) {
+      return res.status(404).send('File not found');
+    }
+    await prisma.file.delete({
+      where: { id: fileId },
+    });
+
+    if (file.path && fs.existsSync(file.path)) {
+      fs.unlink(file.path, (err) => {
+        if (err) console.error('Error deleting physical file:', err);
+      });
+    }
+    if (file.folderId) {
+      return res.redirect('/folders/' + file.folderId);
+    }
+    return res.redirect('/');
+  } catch (err) {
+    console.error('Error deleting file:', err);
+    return res.status(500).send('Internal Server Error');
+  }
+};
+
+// Folder==Folder==Folder==Folder==Folder==Folder==Folder==Folder==Folder==Folder
+//Create folder
+exports.createFolder = async (req, res) => {
+  const { name } = req.body;
+  if (!name) {
+    return res.status(400).send('Folder name is required');
+  }
+
+  try {
+    await prisma.folder.create({
+      data: {
+        name,
+        owner: { connect: { id: req.user.id } },
+      },
+    });
+    res.redirect('/');
+  } catch (err) {
+    console.error('Error creating folder:', err);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+// Open folder
+exports.openFolder = async (req, res) => {
+  const folderId = parseInt(req.params.id, 10);
+  if (Number.isNaN(folderId)) {
+    return res.status(400).send('Invalid folder ID');
+  }
+
+  const folder = await prisma.folder.findFirst({
+    where: { id: folderId, userId: req.user.id },
+    include: { files: { orderBy: { createdAt: 'desc' } } },
+  });
+  if (!folder) {
+    return res.status(404).send('Folder not found');
+  }
+
+  res.render('index', {
+    title: folder.name,
+    user: req.user,
+    currentFolder: folder,
+    folders: [],
+    files: folder.files,
+  });
+};
+
+// Rename folder
+exports.renameFolder = async (req, res) => {
+  const folderId = parseInt(req.params.id, 10);
+  const { newName } = req.body;
+
+  if (Number.isNaN(folderId)) {
+    return res.status(400).send('Invalid folder ID');
+  }
+  if (!newName) {
+    return res.status(400).send('New folder name is required');
+  }
+
+  try {
+    const folder = await prisma.folder.findFirst({
+      where: { id: folderId, userId: req.user.id },
+    });
+    if (!folder) {
+      return res.status(404).send('Folder not found');
+    }
+
+    await prisma.folder.update({
+      where: { id: folderId },
+      data: { name: newName },
+    });
+
+    res.redirect(`/`);
+  } catch (err) {
+    console.error('Error renaming folder:', err);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+// Delete folder
+exports.deleteFolder = async (req, res) => {
+  const folderId = parseInt(req.params.id, 10);
+  if (Number.isNaN(folderId)) {
+    return res.status(400).send('Invalid folder ID');
+  }
+
+  try {
+    const folder = await prisma.folder.findFirst({
+      where: { id: folderId, userId: req.user.id },
+      include: { files: true },
+    });
+    if (!folder) {
+      return res.status(404).send('Folder not found');
+    }
+
+    // Delete all files in the folder
+    for (const file of folder.files) {
+      if (file.path && fs.existsSync(file.path)) {
+        fs.unlink(file.path, (err) => {
+          if (err) console.error('Error deleting physical file:', err);
+        });
+      }
+    }
+
+    await prisma.file.deleteMany({
+      where: { folderId: folderId },
+    });
+
+    await prisma.folder.delete({
+      where: { id: folderId },
+    });
+
+    res.redirect('/');
+  } catch (err) {
+    console.error('Error deleting folder:', err);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+// Upload file to folder
+exports.uploadToFolder = async (req, res) => {
+  if (!req.file) return res.redirect('/');
+  const folderId = parseInt(req.params.id, 10);
+  if (Number.isNaN(folderId)) {
+    fs.unlink(req.file.path, (err) => {
+      if (err) console.error('Error deleting file:', err);
+    });
+    return res.status(400).send('Invalid folder ID');
+  }
+  const folder = await prisma.folder.findFirst({
+    where: { id: folderId, userId: req.user.id },
+  });
+  if (!folder) {
+    fs.unlink(req.file.path, (err) => {
+      if (err) console.error('Error deleting file:', err);
+    });
+    return res.status(404).send('Folder not found');
+  }
+  const { originalname, size, mimetype, path } = req.file;
+  await prisma.file
+    .create({
+      data: {
+        name: originalname,
+        size: size,
+        mimetype: mimetype,
+        path: path,
+        owner: { connect: { id: req.user.id } },
+        folder: { connect: { id: folderId } },
+      },
+    })
+    .then(() => res.redirect(`/folders/${folderId}`))
     .catch((err) => {
       console.error(err);
       res.redirect('/');

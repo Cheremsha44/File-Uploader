@@ -14,6 +14,10 @@
       </a>
       <span class="text-stone-400">/</span>
       <span class="text-stone-500">my-artifacts</span>
+      <% if (currentFolder) { %>
+        <span class="text-stone-400">/</span>
+        <span class="text-stone-500"><%= currentFolder.name %></span>
+      <% } %>
     </nav>
 
     <!-- Right: Search & Action Buttons -->
@@ -42,12 +46,11 @@
       </button>
 
       <!-- Action: Upload File Trigger -->
-      <label class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-amber-950 bg-amber-300 hover:bg-amber-400 border border-amber-400/80 rounded-xl shadow-2xs transition-all active:scale-95 cursor-pointer">
+      <label for="file-input" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-amber-950 bg-amber-300 hover:bg-amber-400 border border-amber-400/80 rounded-xl shadow-2xs transition-all active:scale-95 cursor-pointer">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
         </svg>
         Upload File
-        <input type="file" class="hidden" onchange="this.form.submit()" />
       </label>
 
     </div>
@@ -56,7 +59,7 @@
 
   <!-- 2. DRAG & DROP ALTAR (UPLOAD ZONE) -->
   <section class="relative">
-    <form action="/upload" method="POST" enctype="multipart/form-data" id="upload-form">
+    <form action="<%= currentFolder ? '/folders/' + currentFolder.id + '/upload' : '/upload' %>" method="POST" enctype="multipart/form-data" id="upload-form">
       <div
         id="dropzone"
         class="border-2 border-dashed border-amber-300/80 bg-amber-50/30 hover:bg-amber-100/30 hover:border-amber-400 rounded-2xl p-8 text-center transition-all cursor-pointer group flex flex-col items-center justify-center relative overflow-hidden">
@@ -81,76 +84,119 @@
   </section>
 
 
-  <!-- 3. FOLDERS SECTION (Tiling Grid) -->
-  <section class="space-y-4">
-    <div class="flex items-center justify-between">
-      <h2 class="font-serif text-lg font-bold text-stone-900 tracking-tight flex items-center gap-2">
-        <span>Folders</span>
-        <span class="text-xs font-mono font-normal text-stone-400 bg-stone-200/60 px-2 py-0.5 rounded-full">3</span>
-      </h2>
-    </div>
-
-    <!-- Folder Tiles -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-
-      <!-- Folder Tile 1 -->
-      <a href="/folders/1" class="group bg-stone-100 border border-amber-200/70 hover:border-amber-300 rounded-2xl p-4 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between h-32 relative">
-        <div class="flex items-start justify-between">
-          <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300/50 flex items-center justify-center text-amber-800 group-hover:scale-105 transition-transform">
-            <svg class="w-5 h-5 fill-amber-200/60 stroke-current" viewBox="0 0 24 24" stroke-width="2">
-              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-            </svg>
-          </div>
-          <span class="text-xs font-mono text-stone-400">14 files</span>
+  <% if (!currentFolder) { %>
+    <!-- 3. FOLDERS SECTION (Tiling Grid) -->
+    <section class="space-y-4">
+        <div class="flex items-center justify-between">
+        <h2 class="font-serif text-lg font-bold text-stone-900 tracking-tight flex items-center gap-2">
+            <span>Folders</span>
+            <span class="text-xs font-mono font-normal text-stone-400 bg-stone-200/60 px-2 py-0.5 rounded-full"><%= folders.length %></span>
+        </h2>
         </div>
-        <div>
-          <h3 class="font-medium text-stone-800 truncate group-hover:text-amber-900 transition-colors">Work Documents</h3>
-          <p class="text-xs text-stone-400 font-mono mt-0.5">128.4 MB</p>
-        </div>
-      </a>
 
-      <!-- Folder Tile 2 -->
-      <a href="/folders/2" class="group bg-stone-100 border border-amber-200/70 hover:border-amber-300 rounded-2xl p-4 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between h-32 relative">
-        <div class="flex items-start justify-between">
-          <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300/50 flex items-center justify-center text-amber-800 group-hover:scale-105 transition-transform">
-            <svg class="w-5 h-5 fill-amber-200/60 stroke-current" viewBox="0 0 24 24" stroke-width="2">
-              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-            </svg>
-          </div>
-          <span class="text-xs font-mono text-stone-400">8 files</span>
-        </div>
-        <div>
-          <h3 class="font-medium text-stone-800 truncate group-hover:text-amber-900 transition-colors">Desert Photos</h3>
-          <p class="text-xs text-stone-400 font-mono mt-0.5">45.1 MB</p>
-        </div>
-      </a>
+        <!-- Folder Tiles -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <% folders.forEach(folder => { %>
+                <div class="group bg-stone-100 border border-amber-200/70 hover:border-amber-300 rounded-2xl p-4 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between h-32 relative overflow-hidden">
 
-      <!-- Folder Tile 3 -->
-      <a href="/folders/3" class="group bg-stone-100 border border-amber-200/70 hover:border-amber-300 rounded-2xl p-4 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between h-32 relative">
-        <div class="flex items-start justify-between">
-          <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300/50 flex items-center justify-center text-amber-800 group-hover:scale-105 transition-transform">
-            <svg class="w-5 h-5 fill-amber-200/60 stroke-current" viewBox="0 0 24 24" stroke-width="2">
-              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-            </svg>
-          </div>
-          <span class="text-xs font-mono text-stone-400">2 files</span>
-        </div>
-        <div>
-          <h3 class="font-medium text-stone-800 truncate group-hover:text-amber-900 transition-colors">Code Backups</h3>
-          <p class="text-xs text-stone-400 font-mono mt-0.5">2.8 MB</p>
-        </div>
-      </a>
+                  <!-- 1. ПРОЗРАЧНАЯ ССЫЛКА НА ВСЮ ПЛИТКУ (z-10) -->
+                  <a href="/folders/<%= folder.id %>" class="absolute inset-0 z-10 focus:outline-none" aria-label="Open <%= folder.name %>"></a>
 
-    </div>
-  </section>
+                  <!-- 2. ВЕРХНЯЯ СТРОКА: Иконка + Кол-во файлов -->
+                  <div class="flex items-start justify-between relative z-20 pointer-events-none">
+                    <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300/50 flex items-center justify-center text-amber-800 group-hover:scale-105 transition-transform">
+                      <svg class="w-5 h-5 fill-amber-200/60 stroke-current" viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                      </svg>
+                    </div>
+                    <span class="text-xs font-mono text-stone-400"><%= folder._count.files %> files</span>
+                  </div>
 
+                  <!-- 3. НИЖНЯЯ СТРОКА: Название + Кнопки действий (z-20) -->
+                  <div class="w-full relative z-20">
+
+                    <!-- STATE 1: Обычный вид (Текст + Карандаш + Корзина) -->
+                    <div id="folder-title-<%= folder.id %>" class="flex items-center justify-between gap-1.5">
+                      <div class="truncate pointer-events-none">
+                        <h3 class="font-medium text-stone-800 truncate group-hover:text-amber-900 transition-colors"><%= folder.name %></h3>
+                        <p class="text-xs text-stone-400 font-mono mt-0.5"><%= folder.createdAt.toLocaleDateString() %></p>
+                      </div>
+
+                      <!-- Action Buttons Area -->
+                      <div class="flex items-center gap-1 shrink-0">
+                        <!-- Редактировать (Карандаш) -->
+                        <button
+                          type="button"
+                          onclick="event.preventDefault(); event.stopPropagation(); toggleFolderEdit('<%= folder.id %>')"
+                          title="Edit name"
+                          class="p-1.5 text-stone-400 hover:text-amber-900 hover:bg-amber-200/60 rounded-lg transition-colors cursor-pointer">
+                          <svg class="w-3.5 h-3.5 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                        </button>
+
+                        <!-- Удалить (Корзина) -->
+                        <form action="/folders/<%= folder.id %>/delete" method="POST" class="inline" onclick="event.stopPropagation()">
+                          <button
+                            type="submit"
+                            onclick="return confirm('Delete folder and all its contents?')"
+                            title="Delete folder"
+                            class="p-1.5 text-stone-400 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer">
+                            <svg class="w-3.5 h-3.5 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2">
+                              <polyline points="3 6 5 6 21 6"/>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+
+                    <!-- STATE 2: Форма редактирования (Инпут + Галочка + Крестик) -->
+                    <form
+                      id="folder-form-<%= folder.id %>"
+                      action="/folders/<%= folder.id %>?_method=PUT"
+                      method="POST"
+                      class="hidden items-center gap-1.5 w-full">
+
+                      <input
+                        type="text"
+                        name="newName"
+                        value="<%= folder.name %>"
+                        required
+                        autofocus
+                        onclick="event.stopPropagation()"
+                        class="w-full px-2 py-1 text-xs bg-stone-50 border border-amber-400 rounded-lg text-stone-800 focus:outline-none focus:ring-1 focus:ring-amber-500 font-sans"
+                      />
+
+                      <button
+                        type="submit"
+                        onclick="event.stopPropagation()"
+                        title="Save"
+                        class="p-1.5 bg-amber-300 hover:bg-amber-400 text-amber-950 border border-amber-400 rounded-lg transition-all cursor-pointer shrink-0 shadow-2xs">
+                        <svg class="w-3.5 h-3.5 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                      </button>
+
+                      <button
+                        type="button"
+                        onclick="event.preventDefault(); event.stopPropagation(); toggleFolderEdit('<%= folder.id %>')"
+                        title="Cancel"
+                        class="p-1.5 text-stone-400 hover:text-stone-600 rounded-lg transition-colors cursor-pointer shrink-0">
+                        <svg class="w-3.5 h-3.5 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      </button>
+                    </form>
+
+                  </div>
+
+                </div>
+            <% }) %>
+        </div>
+    </section>
+  <% } %>
 
   <!-- 4. FILES SECTION (Hyprland Tile Cards) -->
   <section class="space-y-4">
     <div class="flex items-center justify-between">
       <h2 class="font-serif text-lg font-bold text-stone-900 tracking-tight flex items-center gap-2">
-        <span>Recent Files</span>
-        <span class="text-xs font-mono font-normal text-stone-400 bg-stone-200/60 px-2 py-0.5 rounded-full">4</span>
+        <span><%= currentFolder ? currentFolder.name : 'Recent Files' %></span>
+        <span class="text-xs font-mono font-normal text-stone-400 bg-stone-200/60 px-2 py-0.5 rounded-full"><%= files.length %></span>
       </h2>
 
       <!-- Sort Options -->
@@ -202,8 +248,7 @@
                   <a href="#" title="Download" class="p-1.5 text-stone-500 hover:text-amber-900 hover:bg-stone-200/60 rounded-lg transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                   </a>
-                  <form action="/files/1?_method=DELETE" method="POST" class="inline">
-                    <button title="Delete" class="p-1.5 text-stone-400 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer">
+                      <form action="/delete-file/<%= file.id %>" method="POST" class="inline">                 <button title="Delete" class="p-1.5 text-stone-400 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     </button>
                   </form>
@@ -233,7 +278,7 @@
 
 <!-- 5. NEW FOLDER MODAL (HTML Dialog) -->
 <dialog id="new-folder-modal" class="rounded-2xl border border-amber-200 shadow-2xl bg-stone-100 p-6 backdrop:bg-stone-900/40 backdrop:backdrop-blur-xs max-w-sm w-full font-sans">
-  <form action="/folders" method="POST" class="space-y-4">
+  <form action="/create-folder" method="POST" class="space-y-4">
     <div class="flex items-center justify-between">
       <h3 class="font-serif text-lg font-bold text-stone-900">Create New Folder</h3>
       <button type="button" onclick="document.getElementById('new-folder-modal').close()" class="text-stone-400 hover:text-stone-600 text-sm font-mono cursor-pointer">✕</button>
@@ -248,3 +293,14 @@
     </div>
   </form>
 </dialog>
+
+<script>
+  function toggleFolderEdit(id) {
+    const titleBlock = document.getElementById(`folder-title-${id}`);
+    const formBlock = document.getElementById(`folder-form-${id}`);
+
+    titleBlock.classList.toggle('hidden');
+    formBlock.classList.toggle('hidden');
+    formBlock.classList.toggle('flex');
+  }
+</script>
