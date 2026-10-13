@@ -1,7 +1,10 @@
 const passport = require('../auth/passport');
 const { prisma } = require('../lib/prisma');
+const { supabase } = require('../lib/supabase');
+const path = require('node:path');
+const crypto = require('node:crypto');
 const bcrypt = require('bcryptjs');
-const fs = require('node:fs');
+const fs = require('fs');
 
 const SORTS = {
   date: { createdAt: 'desc' },
@@ -96,20 +99,34 @@ exports.logOut = (req, res) => {
 // Upload file
 exports.upload = async (req, res) => {
   if (!req.file) return res.redirect('/');
-  const { originalname, size, mimetype, path } = req.file;
+  const file = req.file;
+  const userId = req.user.id;
+  const randomId = crypto.randomUUID();
+  const fileName = `${userId}/${randomId}${path.extname(file.originalname)}`;
+  const bucketName = process.env.SUPABASE_BUCKET;
+  const { data, error } = await supabase.storage
+    .from(bucketName)
+    .upload(fileName, file.buffer, {
+      contentType: file.mimetype,
+      upsert: false,
+    });
+  if (error) {
+    throw error;
+  }
   prisma.file
     .create({
       data: {
-        name: originalname,
-        size: size,
-        mimetype: mimetype,
-        path: path,
+        name: file.originalname,
+        size: file.size,
+        mimetype: file.mimetype,
+        path: fileName,
         owner: { connect: { id: req.user.id } },
       },
     })
     .then(() => res.redirect('/'))
     .catch((err) => {
       console.error(err);
+      supabase.storage.from(bucketName).remove([fileName]);
       res.redirect('/');
     });
 };
@@ -131,15 +148,20 @@ exports.deleteFile = async (req, res) => {
     if (!file) {
       return res.status(404).send('File not found');
     }
+
+    const { data, error } = await supabase.storage
+      .from(process.env.SUPABASE_BUCKET)
+      .remove([file.path]);
+
+    if (error) {
+      return res.status(500).send('Error deleting file from Supabase');
+    } else {
+      console.log('File deleted from Supabase:', data);
+    }
     await prisma.file.delete({
       where: { id: fileId },
     });
 
-    if (file.path && fs.existsSync(file.path)) {
-      fs.unlink(file.path, (err) => {
-        if (err) console.error('Error deleting physical file:', err);
-      });
-    }
     if (file.folderId) {
       return res.redirect('/folders/' + file.folderId);
     }
@@ -174,6 +196,8 @@ exports.createFolder = async (req, res) => {
 
 // Open folder
 exports.openFolder = async (req, res) => {
+  const q = (req.query.q || '').trim();
+  const sort = SORTS[req.query.sort] ? req.query.sort : 'date';
   const folderId = parseInt(req.params.id, 10);
   if (Number.isNaN(folderId)) {
     return res.status(400).send('Invalid folder ID');
@@ -193,6 +217,8 @@ exports.openFolder = async (req, res) => {
     currentFolder: folder,
     folders: [],
     files: folder.files,
+    q,
+    sort,
   });
 };
 
@@ -273,28 +299,44 @@ exports.uploadToFolder = async (req, res) => {
   if (!req.file) return res.redirect('/');
   const folderId = parseInt(req.params.id, 10);
   if (Number.isNaN(folderId)) {
-    fs.unlink(req.file.path, (err) => {
-      if (err) console.error('Error deleting file:', err);
-    });
+    console.error('Invalid folder ID:', req.params.id);
     return res.status(400).send('Invalid folder ID');
   }
   const folder = await prisma.folder.findFirst({
     where: { id: folderId, userId: req.user.id },
   });
   if (!folder) {
-    fs.unlink(req.file.path, (err) => {
-      if (err) console.error('Error deleting file:', err);
-    });
+    console.error(
+      'Folder not found for user:',
+      req.user.id,
+      'Folder ID:',
+      folderId,
+    );
     return res.status(404).send('Folder not found');
   }
-  const { originalname, size, mimetype, path } = req.file;
+  const file = req.file;
+  const userId = req.user.id;
+  const randomId = crypto.randomUUID();
+  const fileName = `${userId}/${randomId}${path.extname(file.originalname)}`;
+  const bucketName = process.env.SUPABASE_BUCKET;
+
+  const { data, error } = await supabase.storage
+    .from(bucketName)
+    .upload(fileName, file.buffer, {
+      contentType: file.mimetype,
+      upsert: false,
+    });
+  if (error) {
+    throw error;
+  }
+
   await prisma.file
     .create({
       data: {
-        name: originalname,
-        size: size,
-        mimetype: mimetype,
-        path: path,
+        name: file.originalname,
+        size: file.size,
+        mimetype: file.mimetype,
+        path: fileName,
         owner: { connect: { id: req.user.id } },
         folder: { connect: { id: folderId } },
       },
@@ -302,6 +344,7 @@ exports.uploadToFolder = async (req, res) => {
     .then(() => res.redirect(`/folders/${folderId}`))
     .catch((err) => {
       console.error(err);
-      res.redirect('/');
+      supabase.storage.from(bucketName).remove([fileName]);
+      res.redirect(`/folders/${folderId}`);
     });
 };
