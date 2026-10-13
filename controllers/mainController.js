@@ -3,18 +3,32 @@ const { prisma } = require('../lib/prisma');
 const bcrypt = require('bcryptjs');
 const fs = require('node:fs');
 
+const SORTS = {
+  date: { createdAt: 'desc' },
+  name: { name: 'asc' },
+  size: { size: 'desc' },
+};
+
 exports.home = async (req, res) => {
+  const q = (req.query.q || '').trim();
+  const sort = SORTS[req.query.sort] ? req.query.sort : 'date';
   let files = [];
   let folders = [];
 
   if (req.user) {
     files = await prisma.file.findMany({
-      where: { userId: req.user.id, folderId: null },
-      orderBy: { createdAt: 'desc' },
+      where: {
+        userId: req.user.id,
+        folderId: null,
+        ...(q && { name: { contains: q, mode: 'insensitive' } }),
+      },
+      orderBy: SORTS[sort],
     });
     folders = await prisma.folder.findMany({
-      where: { userId: req.user.id },
-      orderBy: { createdAt: 'desc' },
+      where: {
+        userId: req.user.id,
+        ...(q && { name: { contains: q, mode: 'insensitive' } }),
+      },
       include: { _count: { select: { files: true } } },
     });
   }
@@ -25,6 +39,8 @@ exports.home = async (req, res) => {
     currentFolder: null,
     folders,
     files,
+    q,
+    sort,
   });
 };
 
