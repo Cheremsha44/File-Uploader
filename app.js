@@ -16,7 +16,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.set('trust proxy', 1);
-
+app.use(express.static('public'));
 app.use(
   expressSession({
     cookie: {
@@ -70,7 +70,7 @@ app.use(async (req, res, next) => {
   next();
 });
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static('public'));
+
 app.use(router);
 
 const server = app.listen(PORT, () => {
