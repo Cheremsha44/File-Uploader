@@ -47,6 +47,18 @@ exports.home = async (req, res) => {
   });
 };
 
+exports.about = (req, res) => {
+  res.render('about', { title: 'About' });
+};
+
+exports.contact = (req, res) => {
+  res.render('contact', { title: 'Contact' });
+};
+
+exports.upgrade = (req, res) => {
+  res.render('upgrade', { title: 'Upgrade' });
+};
+
 // authorization\registration
 exports.login = (req, res) => {
   res.render('login', { title: 'Login' });
@@ -55,26 +67,35 @@ exports.register = (req, res) => {
   res.render('register', { title: 'Register' });
 };
 
-exports.registerPost = async (req, res) => {
+exports.registerPost = async (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
+
   if (password !== confirmPassword) {
     console.error('Passwords do not match');
     return res.redirect('/register');
   }
-  if (password.length < 6) {
+
+  if (password.length < 5) {
     return res.redirect('/register');
   }
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         email,
         password_hash: hashedPassword,
       },
     });
 
-    res.redirect('/login');
+    req.login(user, (err) => {
+      if (err) {
+        console.error('Auto-login error:', err);
+        return next(err);
+      }
+      return res.redirect('/');
+    });
   } catch (err) {
     console.error('Registration error:', err);
     res.redirect('/register');
@@ -87,7 +108,7 @@ exports.loginPost = (req, res, next) => {
   })(req, res, next);
 };
 
-exports.logOut = (req, res) => {
+exports.logOut = (req, res, next) => {
   req.logout((err) => {
     if (err) {
       return next(err);
@@ -130,6 +151,104 @@ exports.upload = async (req, res) => {
       res.redirect('/');
     });
 };
+
+// Download file
+exports.download = async (req, res) => {
+  const fileId = parseInt(req.params.id, 10);
+
+  if (Number.isNaN(fileId)) {
+    return res.status(400).send('Invalid file ID');
+  }
+
+  try {
+    const file = await prisma.file.findFirst({
+      where: {
+        id: fileId,
+        userId: req.user.id,
+      },
+    });
+    if (!file) {
+      return res.status(404).send('File not found');
+    }
+
+    const { data, error } = await supabase.storage
+      .from(process.env.SUPABASE_BUCKET)
+      .createSignedUrl(file.path, 6000);
+
+    if (error) {
+      return res
+        .status(500)
+        .send('Error dowloading file from Supabase' + error);
+    } else {
+      return res.redirect(data.signedUrl);
+    }
+  } catch (err) {
+    console.error('Error installing file' + err);
+    return res.status(500).send('Internal Server Error');
+  }
+};
+
+// 1. Рендер страницы Shared со списком файлов юзера
+exports.sharedPage = async (req, res) => {
+  if (!req.user) {
+    // Если не залогинен — рендерим гостевую заглушку, которую делали ранее
+    return res.render('shared-guest');
+  }
+
+  try {
+    const files = await prisma.file.findMany({
+      where: { userId: req.user.id },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    res.render('shared', {
+      title: 'Share Hub',
+      user: req.user,
+      files,
+    });
+  } catch (err) {
+    console.error('Error loading shared page:', err);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+// 2. API генерации ссылки (поддерживает выбор времени жизни в секундах)
+exports.shareFile = async (req, res) => {
+  const fileId = parseInt(req.params.id, 10);
+  // Берем время жизни из query (?expires=86400), по умолчанию 7 дней (604800 сек)
+  const expiresIn = parseInt(req.query.expires, 10) || 60 * 60 * 24 * 7;
+
+  if (Number.isNaN(fileId)) {
+    return res.status(400).json({ error: 'Invalid file ID' });
+  }
+
+  try {
+    const file = await prisma.file.findFirst({
+      where: {
+        id: fileId,
+        userId: req.user.id,
+      },
+    });
+
+    if (!file) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+
+    const { data, error } = await supabase.storage
+      .from(process.env.SUPABASE_BUCKET)
+      .createSignedUrl(file.path, expiresIn);
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.json({ url: data.signedUrl });
+  } catch (err) {
+    console.error('Error sharing file:', err);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 // Delete file
 exports.deleteFile = async (req, res) => {
   const fileId = parseInt(req.params.id, 10);

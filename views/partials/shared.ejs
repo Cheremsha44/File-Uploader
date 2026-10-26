@@ -1,0 +1,228 @@
+<!-- Shared Page: Dynamic Public Caravan Routes (Desert Theme) -->
+<main class="flex-1 bg-stone-50 text-stone-800 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-8">
+
+  <!-- 1. TOP CONTROL BAR -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-amber-200/60">
+    <nav class="flex items-center gap-2 text-sm font-mono">
+      <a href="/" class="flex items-center gap-1.5 text-stone-900 font-semibold hover:text-amber-800 transition-colors">
+        <svg class="w-4 h-4 text-amber-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        <span>oasis</span>
+      </a>
+      <span class="text-stone-400">/</span>
+      <span class="text-stone-500">shared-links</span>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <span class="text-xs font-mono text-stone-500">
+        Доступно для шаринга: <strong class="text-stone-800"><%= files.length %></strong>
+      </span>
+      <a href="/" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-amber-950 bg-amber-300 hover:bg-amber-400 border border-amber-400/80 rounded-xl shadow-2xs transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Загрузить новый файл
+      </a>
+    </div>
+  </div>
+
+  <!-- 2. QUICK SHARE GENERATOR BANNER (Altar Style) -->
+  <section class="border-2 border-dashed border-amber-300/80 bg-amber-50/30 rounded-2xl p-6 sm:p-8">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div class="space-y-1.5 max-w-xl">
+        <div class="inline-flex items-center gap-2 text-xs font-mono text-amber-800">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+          <span>Supabase Signed URL Generator</span>
+        </div>
+        <h2 class="font-serif text-xl font-bold text-stone-900">
+          Генератор защищенных ссылок с токеном доступа
+        </h2>
+        <p class="text-xs text-stone-500 leading-relaxed">
+          Выбери любой свой артефакт и срок действия токена. Получателю не нужно регистрироваться — файл до 50 МБ откроется напрямую по временной криптографической ссылке.
+        </p>
+      </div>
+
+      <!-- Real Link Generator Controls -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 bg-stone-100 p-3 rounded-xl border border-stone-200/80">
+        <!-- Выбор файла -->
+        <select id="quick-file-select" class="px-3 py-2 text-xs font-sans bg-stone-50 border border-stone-300/80 rounded-lg text-stone-800 focus:outline-none focus:border-amber-500 max-w-48 truncate">
+          <% if (files.length === 0) { %>
+            <option value="">Нет загруженных файлов</option>
+          <% } else { %>
+            <% files.forEach(file => { %>
+              <option value="<%= file.id %>"><%= file.name %></option>
+            <% }) %>
+          <% } %>
+        </select>
+
+        <!-- Выбор времени жизни ссылки (в секундах) -->
+        <select id="quick-expire-select" class="px-3 py-2 text-xs font-mono bg-stone-50 border border-stone-300/80 rounded-lg text-stone-700 focus:outline-none focus:border-amber-500">
+          <option value="604800">Срок: 7 дней</option>
+          <option value="86400">Срок: 24 часа</option>
+          <option value="3600">Срок: 1 час</option>
+          <option value="2592000">Срок: 30 дней</option>
+        </select>
+
+        <button
+          type="button"
+          <%= files.length === 0 ? 'disabled' : '' %>
+          onclick="generateFromBanner(this)"
+          class="px-4 py-2 text-xs font-medium text-amber-950 bg-amber-300 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed border border-amber-400 rounded-lg transition-all cursor-pointer shrink-0">
+          Сгенерировать и скопировать
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. FILES READY TO SHARE (Tiling Grid) -->
+  <section class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 class="font-serif text-lg font-bold text-stone-900 tracking-tight flex items-center gap-2">
+        <span>Ваши файлы для быстрого шаринга</span>
+        <span class="text-xs font-mono font-normal text-stone-400 bg-stone-200/60 px-2 py-0.5 rounded-full"><%= files.length %></span>
+      </h2>
+      <span class="text-xs font-mono text-stone-400">Signed JWT Links (7 дней)</span>
+    </div>
+
+    <% if (files.length === 0) { %>
+      <!-- Empty State -->
+      <div class="bg-stone-100 border border-stone-200/80 rounded-2xl p-10 text-center space-y-3">
+        <p class="font-serif text-lg text-stone-700">В твоем караване пока нет файлов для шаринга</p>
+        <p class="text-xs font-mono text-stone-400">Загрузи первый файл на главной странице, чтобы делиться ссылками</p>
+        <a href="/" class="inline-block mt-2 px-4 py-2 text-xs font-medium text-amber-950 bg-amber-300 hover:bg-amber-400 border border-amber-400 rounded-xl transition-all">
+          Перейти в дашборд →
+        </a>
+      </div>
+    <% } else { %>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <% files.forEach(file => { %>
+          <%
+            const isImage = file.mimetype.startsWith('image/');
+            const isDoc = file.mimetype === 'application/pdf' || file.mimetype.startsWith('text/');
+            const tone = isImage
+              ? 'bg-amber-100 text-amber-900 border-amber-300/50'
+              : isDoc
+                ? 'bg-stone-200 text-stone-700 border-stone-300/60'
+                : 'bg-yellow-100 text-yellow-800 border-yellow-300/50';
+          %>
+          <div class="group bg-stone-100 border border-amber-200/70 hover:border-amber-300 rounded-2xl p-5 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+            <div class="flex items-start justify-between">
+              <div class="p-2.5 rounded-xl border <%= tone %>">
+                <% if (isImage) { %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                <% } else if (isDoc) { %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                <% } else { %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/>
+                  </svg>
+                <% } %>
+              </div>
+              <span id="badge-<%= file.id %>" class="text-xs font-mono text-stone-600 bg-stone-200/70 px-2.5 py-0.5 rounded-full">
+                Ready to share
+              </span>
+            </div>
+
+            <div>
+              <h3 class="font-medium text-stone-900 truncate" title="<%= file.name %>"><%= file.name %></h3>
+              <p class="text-xs font-mono text-stone-400 mt-0.5">
+                <%= (file.size / 1024 / 1024).toFixed(1) %> MB • <%= file.mimetype %> • <%= file.createdAt.toLocaleDateString() %>
+              </p>
+            </div>
+
+            <!-- Dynamic Link Input Box -->
+            <div class="flex items-center gap-1.5 pt-2 border-t border-stone-200/70">
+              <input
+                id="share-input-<%= file.id %>"
+                type="text"
+                readonly
+                placeholder="Нажми Get Link →"
+                class="w-full px-2.5 py-1.5 text-xs font-mono bg-stone-50 border border-stone-300/80 rounded-lg text-stone-600 placeholder-stone-400 focus:outline-none"
+              />
+              <button
+                type="button"
+                onclick="generateCardLink('<%= file.id %>', this)"
+                class="px-3 py-1.5 text-xs font-mono bg-amber-200/70 hover:bg-amber-300 text-amber-950 rounded-lg transition-colors cursor-pointer shrink-0">
+                Get Link
+              </button>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </section>
+
+</main>
+
+<script>
+  // Генерация ссылки для конкретной карточки
+  async function generateCardLink(fileId, btn) {
+    const input = document.getElementById(`share-input-${fileId}`);
+    const badge = document.getElementById(`badge-${fileId}`);
+    const expireSeconds = document.getElementById('quick-expire-select')?.value || 604800;
+
+    try {
+      btn.innerText = '...';
+      const res = await fetch(`/share/${fileId}?expires=${expireSeconds}`);
+      const data = await res.json();
+
+      if (!res.ok || !data.url) {
+        alert('Ошибка генерации ссылки');
+        btn.innerText = 'Get Link';
+        return;
+      }
+
+      input.value = data.url;
+      await navigator.clipboard.writeText(data.url);
+
+      // Меняем статус бейджа и кнопки
+      badge.innerText = 'Active • Link Copied';
+      badge.className = 'text-xs font-mono text-emerald-800 bg-emerald-100/80 border border-emerald-300/60 px-2.5 py-0.5 rounded-full';
+      btn.innerText = 'Copied ✓';
+
+      setTimeout(() => {
+        btn.innerText = 'Copy Again';
+      }, 2000);
+    } catch (err) {
+      console.error('Ошибка шаринга:', err);
+      btn.innerText = 'Get Link';
+    }
+  }
+
+  // Генерация ссылки из верхнего баннера
+  async function generateFromBanner(btn) {
+    const fileId = document.getElementById('quick-file-select').value;
+    const expireSeconds = document.getElementById('quick-expire-select').value;
+    if (!fileId) return;
+
+    const originalText = btn.innerText;
+    try {
+      btn.innerText = 'Генерация...';
+      const res = await fetch(`/share/${fileId}?expires=${expireSeconds}`);
+      const data = await res.json();
+
+      if (res.ok && data.url) {
+        await navigator.clipboard.writeText(data.url);
+        // Также вставляем ссылку в карточку этого файла внизу
+        const cardInput = document.getElementById(`share-input-${fileId}`);
+        if (cardInput) cardInput.value = data.url;
+
+        btn.innerText = 'Скопировано в буфер ✓';
+        setTimeout(() => {
+          btn.innerText = originalText;
+        }, 2000);
+      }
+    } catch (err) {
+      console.error(err);
+      btn.innerText = originalText;
+    }
+  }
+</script>

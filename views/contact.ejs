@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head', { title: 'contact' }) %>
+<body class="min-h-screen flex flex-col bg-stone-50 text-stone-800 antialiased">
+
+  <%- include('partials/header') %>
+<!-- Contact Page: Memory Caravan (Desert Theme) -->
+<main class="flex-1 bg-stone-50 text-stone-800 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-8">
+
+  <!-- 1. TOP BAR / BREADCRUMBS -->
+  <div class="flex items-center justify-between gap-4 pb-6 border-b border-amber-200/60">
+    <nav class="flex items-center gap-2 text-sm font-mono">
+      <a href="/" class="flex items-center gap-1.5 text-stone-900 font-semibold hover:text-amber-800 transition-colors">
+        <svg class="w-4 h-4 text-amber-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        <span>oasis</span>
+      </a>
+      <span class="text-stone-400">/</span>
+      <span class="text-stone-500">contact-creator</span>
+    </nav>
+
+    <div class="inline-flex items-center gap-2 text-xs font-mono text-emerald-800 bg-emerald-100/80 border border-emerald-300/60 px-3 py-1 rounded-full">
+      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      Открыт к крутым проектам
+    </div>
+  </div>
+
+  <!-- 2. DEVELOPER SHOWCASE CARD -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Left Column: Pitch -->
+    <div class="lg:col-span-2 bg-stone-100 border border-amber-200/80 rounded-2xl p-8 flex flex-col justify-between space-y-6 shadow-2xs">
+      <div class="space-y-4">
+        <div class="inline-flex items-center gap-2 text-xs font-mono text-amber-900 bg-amber-200/60 px-2.5 py-1 rounded-lg">
+          <span>Fullstack Developer • @Cheremsha44</span>
+        </div>
+
+        <h1 class="font-serif text-3xl sm:text-4xl font-bold text-stone-900 tracking-tight">
+          Memory — это <span class="text-amber-600">инструмент</span> для хранения и поиска информации.
+        </h1>
+
+        <p class="text-stone-600 text-sm sm:text-base leading-relaxed">
+          Под капотом чистая архитектура на <strong>Node.js, Prisma и PostgreSQL</strong>, а снаружи — продуманный до мелочей интерфейс, которым приятно пользоваться каждый день.
+        </p>
+      </div>
+
+      <div class="pt-4 border-t border-stone-200/80 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-stone-500">
+        <span>Стек: JS/TS • Node.js • Express • Prisma • SQL • Tailwind</span>
+        <span class="text-amber-800 font-semibold">Response time: ~15 min</span>
+      </div>
+    </div>
+
+    <!-- Right Column: Direct Links (Telegram & GitHub) -->
+    <div class="space-y-4 flex flex-col justify-between">
+
+      <!-- Telegram Card -->
+      <a href="https://t.me/cheremsha44" target="_blank" rel="noopener noreferrer"
+         class="group bg-amber-50/60 hover:bg-amber-100/50 border border-amber-300/80 hover:border-amber-400 rounded-2xl p-6 transition-all shadow-2xs hover:shadow-md flex flex-col justify-between flex-1">
+        <div class="flex items-start justify-between">
+          <div class="w-12 h-12 rounded-2xl bg-amber-300 border border-amber-400/80 flex items-center justify-center text-amber-950 group-hover:scale-105 transition-transform shadow-2xs">
+            <svg class="w-6 h-6 fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+            </svg>
+          </div>
+          <span class="text-xs font-mono text-amber-900 bg-amber-200/60 px-2.5 py-1 rounded-full group-hover:bg-amber-300 transition-colors">
+            Написать в ЛС ↗
+          </span>
+        </div>
+
+        <div class="mt-6">
+          <p class="text-xs font-mono text-stone-500 uppercase">Telegram</p>
+          <h2 class="font-serif text-2xl font-bold text-stone-900 group-hover:text-amber-900 transition-colors mt-0.5">
+            @cheremsha44
+          </h2>
+          <p class="text-xs text-stone-500 mt-1">Самый быстрый способ обсудить проект или пообщаться</p>
+        </div>
+      </a>
+
+      <!-- GitHub Card -->
+      <a href="https://github.com/Cheremsha44" target="_blank" rel="noopener noreferrer"
+         class="group bg-stone-100 hover:bg-stone-200/60 border border-stone-300/80 hover:border-amber-300 rounded-2xl p-6 transition-all shadow-2xs hover:shadow-md flex flex-col justify-between flex-1">
+        <div class="flex items-start justify-between">
+          <div class="w-12 h-12 rounded-2xl bg-stone-200 border border-stone-300 flex items-center justify-center text-stone-800 group-hover:scale-105 transition-transform">
+            <svg class="w-6 h-6 fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+            </svg>
+          </div>
+          <span class="text-xs font-mono text-stone-600 bg-stone-200/80 px-2.5 py-1 rounded-full group-hover:bg-amber-200/60 group-hover:text-amber-900 transition-colors">
+            Смотреть код ↗
+          </span>
+        </div>
+
+        <div class="mt-6">
+          <p class="text-xs font-mono text-stone-500 uppercase">GitHub Profile</p>
+          <h2 class="font-serif text-2xl font-bold text-stone-900 group-hover:text-amber-900 transition-colors mt-0.5">
+            Cheremsha44
+          </h2>
+          <p class="text-xs text-stone-500 mt-1">Исходники проектов, репозитории и контрибьюты</p>
+        </div>
+      </a>
+
+    </div>
+
+  </div>
+
+</main>
+<%- include('partials/footer') %>
+
+</body>
+</html>

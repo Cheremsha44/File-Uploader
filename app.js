@@ -15,16 +15,21 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.set('trust proxy', 1);
+
 app.use(
   expressSession({
     cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
     },
-    secret: 'a santa at nasa',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: new PrismaSessionStore(prisma, {
-      checkPeriod: 2 * 60 * 1000, //ms
+      checkPeriod: 2 * 60 * 1000,
       dbRecordIdIsSessionId: true,
       dbRecordIdFunction: undefined,
     }),
@@ -33,6 +38,37 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(async (req, res, next) => {
+  res.locals.user = req.user || null;
+
+  if (req.user) {
+    try {
+      // Считаем сумму колонки size для всех файлов этого юзера в БД
+      const stats = await prisma.file.aggregate({
+        where: { userId: req.user.id },
+        _sum: { size: true },
+      });
+
+      const usedBytes = stats._sum.size || 0;
+      const maxMB = 500; // Лимит на юзера в МБ (можешь поставить 100 или 1000)
+      const maxBytes = maxMB * 1024 * 1024;
+
+      res.locals.usedMB = (usedBytes / (1024 * 1024)).toFixed(1);
+      res.locals.maxMB = maxMB;
+      res.locals.usedPercent = Math.min(
+        100,
+        Math.round((usedBytes / maxBytes) * 100),
+      );
+    } catch (err) {
+      console.error('Storage calc error:', err);
+      res.locals.usedMB = '0.0';
+      res.locals.maxMB = 500;
+      res.locals.usedPercent = 0;
+    }
+  }
+
+  next();
+});
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
 app.use(router);

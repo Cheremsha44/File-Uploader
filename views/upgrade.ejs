@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head', { title: 'about-caravan' }) %>
+<body class="min-h-screen flex flex-col bg-stone-50 text-stone-800 antialiased">
+
+  <%- include('partials/header') %>
+  <!-- Upgrade / Pricing Page: Memory Caravan (Desert Theme) -->
+  <main class="flex-1 bg-stone-50 text-stone-800 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-8">
+
+    <!-- 1. TOP BAR / BREADCRUMBS -->
+    <div class="flex items-center justify-between gap-4 pb-6 border-b border-amber-200/60">
+      <nav class="flex items-center gap-2 text-sm font-mono">
+        <a href="/" class="flex items-center gap-1.5 text-stone-900 font-semibold hover:text-amber-800 transition-colors">
+          <svg class="w-4 h-4 text-amber-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          <span>oasis</span>
+        </a>
+        <span class="text-stone-400">/</span>
+        <span class="text-stone-500">upgrade-storage</span>
+      </nav>
+
+      <span class="text-xs font-mono text-amber-900 bg-amber-100 border border-amber-300/60 px-2.5 py-1 rounded-full">
+        Demo Mode • Pure Aesthetics
+      </span>
+    </div>
+
+    <!-- 2. HONEST DISCLAIMER BANNER -->
+    <section class="border-2 border-dashed border-amber-300/80 bg-amber-50/40 rounded-3xl p-6 sm:p-8 text-center max-w-3xl mx-auto space-y-3">
+      <div class="w-12 h-12 rounded-2xl bg-amber-200/70 border border-amber-300 flex items-center justify-center text-amber-900 mx-auto shadow-inner">
+        <svg class="w-6 h-6 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+      </div>
+      <h1 class="font-serif text-2xl sm:text-3xl font-bold text-stone-900">
+        Эта страница добавлена исключительно для красоты
+      </h1>
+      <p class="text-xs sm:text-sm text-stone-600 font-sans max-w-xl mx-auto leading-relaxed">
+        Кнопка «Upgrade» в шапке выглядит солидно и завершает дизайн каравана. Деньги за воздух мы не берем — пользуйся бесплатными 500мб и грузи файлы до 50 МБ.
+      </p>
+    </section>
+
+    <!-- 3. TARIFF TILES (Tiling Grid) -->
+    <section class="space-y-4 pt-2">
+      <div class="text-center max-w-md mx-auto space-y-1">
+        <h2 class="font-serif text-xl font-bold text-stone-900">Вымышленные тарифы оазиса</h2>
+        <p class="text-xs font-mono text-stone-400">Выберите то, за что никогда не придется платить</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 max-w-5xl mx-auto">
+
+        <!-- Tier 1: Nomad (Текущий бесплатный) -->
+        <div class="bg-stone-100 border border-amber-200/80 rounded-2xl p-6 shadow-2xs flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono text-stone-500 uppercase">Wanderer</span>
+              <span class="text-xs font-mono text-emerald-800 bg-emerald-100/80 px-2.5 py-0.5 rounded-full border border-emerald-300/50">Твой план</span>
+            </div>
+            <div>
+              <h3 class="font-serif text-2xl font-bold text-stone-900">0 ₽ <span class="text-xs font-mono text-stone-400 font-normal">/ навсегда</span></h3>
+              <p class="text-xs text-stone-500 mt-1">Идеально для хранения личных архивов в песках.</p>
+            </div>
+            <ul class="text-xs font-mono text-stone-600 space-y-2 border-t border-stone-200/80 pt-4">
+              <li class="flex items-center gap-2">
+                <span class="text-amber-800 font-bold">✓</span> До 500мб общего хранилища
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-amber-800 font-bold">✓</span> Лимит на файл: 50 МБ
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-amber-800 font-bold">✓</span> Публичные ссылки на файлы
+              </li>
+            </ul>
+          </div>
+
+          <button disabled class="w-full py-2.5 text-xs font-mono bg-stone-200/80 text-stone-500 rounded-xl cursor-not-allowed">
+            Уже подключено
+          </button>
+        </div>
+
+        <!-- Tier 2: Caravan Master (Фейковый Pro) -->
+        <div class="bg-amber-50/50 border-2 border-amber-400/90 rounded-2xl p-6 shadow-md flex flex-col justify-between space-y-6 relative overflow-hidden">
+          <div class="absolute -right-10 -top-10 w-24 h-24 bg-amber-300/30 rounded-full blur-xl pointer-events-none"></div>
+
+          <div class="space-y-4 relative z-10">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono text-amber-900 uppercase font-bold">Caravan Master</span>
+              <span class="text-xs font-mono text-amber-950 bg-amber-300 px-2.5 py-0.5 rounded-full shadow-2xs font-semibold">Чисто флекс</span>
+            </div>
+            <div>
+              <h3 class="font-serif text-2xl font-bold text-stone-900">999 ₽ <span class="text-xs font-mono text-stone-400 font-normal">/ месяц</span></h3>
+              <p class="text-xs text-stone-600 mt-1">Для тех, кому тесно в стандартном оазисе.</p>
+            </div>
+            <ul class="text-xs font-mono text-stone-700 space-y-2 border-t border-amber-200/80 pt-4">
+              <li class="flex items-center gap-2">
+                <span class="text-amber-800 font-bold">✓</span> 1 ТБ облачного пространства
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-amber-800 font-bold">✓</span> Загрузка файлов до 2 ГБ
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-amber-800 font-bold">✓</span> Собственный караван верблюдов
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-amber-800 font-bold">✓</span> +100 к уважению в пустыне
+              </li>
+            </ul>
+          </div>
+
+          <button
+            type="button"
+            onclick="alert('Говорим же: сделано для красоты! Твой текущий тариф и так самый лучший.')"
+            class="w-full py-2.5 text-xs font-medium text-amber-950 bg-amber-300 hover:bg-amber-400 border border-amber-400 rounded-xl transition-all cursor-pointer shadow-2xs active:scale-95">
+            Купить за воздух
+          </button>
+        </div>
+
+        <!-- Tier 3: Sultan (Шуточный Enterprise) -->
+        <div class="bg-stone-100 border border-amber-200/80 rounded-2xl p-6 shadow-2xs flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono text-stone-500 uppercase">Sultan</span>
+              <span class="text-xs font-mono text-stone-400 bg-stone-200/70 px-2.5 py-0.5 rounded-full">VIP</span>
+            </div>
+            <div>
+              <h3 class="font-serif text-2xl font-bold text-stone-900">∞ <span class="text-xs font-mono text-stone-400 font-normal">золотых</span></h3>
+              <p class="text-xs text-stone-500 mt-1">Персональный дата-центр прямо посреди Сахары.</p>
+            </div>
+            <ul class="text-xs font-mono text-stone-600 space-y-2 border-t border-stone-200/80 pt-4">
+              <li class="flex items-center gap-2">
+                <span class="text-amber-800 font-bold">✓</span> Неограниченное место в базе
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-amber-800 font-bold">✓</span> Выделенный PostgreSQL сервер
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-amber-800 font-bold">✓</span> Прямая связь с шейхом
+              </li>
+            </ul>
+          </div>
+
+          <a href="/contact" class="w-full py-2.5 text-center text-xs font-medium text-stone-700 bg-stone-200/70 hover:bg-amber-100/60 border border-stone-300/80 rounded-xl transition-all">
+            Написать автору
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. BOTTOM ACTION -->
+    <div class="text-center pt-4">
+      <a href="/" class="inline-flex items-center gap-2 text-xs font-mono text-stone-500 hover:text-amber-900 transition-colors">
+        <span>← Вернуться к своим артефактам</span>
+      </a>
+    </div>
+
+  </main>
+  <%- include('partials/footer') %>
+
+</body>
+</html>

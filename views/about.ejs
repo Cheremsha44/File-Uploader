@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head', { title: 'about-caravan' }) %>
+<body class="min-h-screen flex flex-col bg-stone-50 text-stone-800 antialiased">
+
+  <%- include('partials/header') %>
+<!-- About Page: Memory Caravan (Desert Theme) -->
+<main class="flex-1 bg-stone-50 text-stone-800 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-8">
+
+  <!-- 1. TOP BAR / BREADCRUMBS -->
+  <div class="flex items-center justify-between gap-4 pb-6 border-b border-amber-200/60">
+    <nav class="flex items-center gap-2 text-sm font-mono">
+      <a href="/" class="flex items-center gap-1.5 text-stone-900 font-semibold hover:text-amber-800 transition-colors">
+        <svg class="w-4 h-4 text-amber-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        <span>oasis</span>
+      </a>
+      <span class="text-stone-400">/</span>
+      <span class="text-stone-500">about-caravan</span>
+    </nav>
+
+    <span class="text-xs font-mono text-amber-900 bg-amber-100 border border-amber-300/60 px-2.5 py-1 rounded-full">
+      v1.0.0 • Production Ready
+    </span>
+  </div>
+
+  <!-- 2. HERO BANNER -->
+  <section class="bg-amber-50/40 border border-amber-200/80 rounded-2xl p-8 sm:p-10 relative overflow-hidden">
+    <div class="max-w-3xl space-y-4 relative z-10">
+      <div class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-amber-800 bg-amber-100/80 px-3 py-1 rounded-lg border border-amber-300/50">
+        <span>Desert Oasis for Digital Artifacts</span>
+      </div>
+      <h1 class="font-serif text-3xl sm:text-4xl font-bold text-stone-900 tracking-tight">
+        Memory Caravan — надежное облачное хранилище с эстетикой пустынного минимализма.
+      </h1>
+      <p class="text-stone-600 text-sm sm:text-base leading-relaxed">
+        Проект разработан как быстрый, безопасный и удобный файловый менеджер. Никакого визуального шума — только ваши папки, мгновенная загрузка файлов до <strong>50 МБ</strong> и удобный обмен данными с другими пользователями по защищенным ссылкам.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3. KEY FEATURES (3 Cards) -->
+  <section class="space-y-4">
+    <h2 class="font-serif text-lg font-bold text-stone-900 tracking-tight flex items-center gap-2">
+      <span>Возможности платформы</span>
+      <span class="text-xs font-mono font-normal text-stone-400 bg-stone-200/60 px-2 py-0.5 rounded-full">Core</span>
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Feature 1: 50MB Upload -->
+      <div class="bg-stone-100 border border-amber-200/70 rounded-2xl p-6 space-y-3 shadow-2xs">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300/60 flex items-center justify-center text-amber-800">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <h3 class="font-serif font-bold text-stone-900 text-base">Загрузка файлов до 50 МБ</h3>
+        <p class="text-xs text-stone-600 leading-relaxed">
+          Поддержка любых форматов: от тяжелых архивов и PDF-документов до фотографий в высоком разрешении. Удобный Drag & Drop интерфейс.
+        </p>
+      </div>
+
+      <!-- Feature 2: Link Sharing -->
+      <div class="bg-stone-100 border border-amber-200/70 rounded-2xl p-6 space-y-3 shadow-2xs">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300/60 flex items-center justify-center text-amber-800">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+        </div>
+        <h3 class="font-serif font-bold text-stone-900 text-base">Быстрый шаринг по ссылке</h3>
+        <p class="text-xs text-stone-600 leading-relaxed">
+          Делитесь отдельными файлами или целыми папками с другими пользователями. Генерируйте публичные ссылки в один клик.
+        </p>
+      </div>
+
+      <!-- Feature 3: Security -->
+      <div class="bg-stone-100 border border-amber-200/70 rounded-2xl p-6 space-y-3 shadow-2xs">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300/60 flex items-center justify-center text-amber-800">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <h3 class="font-serif font-bold text-stone-900 text-base">Защита и приватность</h3>
+        <p class="text-xs text-stone-600 leading-relaxed">
+          Безопасная аутентификация на базе JWT-токенов гарантирует, что доступ к вашим личным артефактам есть только у вас.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. TECH STACK SECTION (Tiling Grid) -->
+  <section class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 class="font-serif text-lg font-bold text-stone-900 tracking-tight flex items-center gap-2">
+        <span>Технологический стек под капотом</span>
+        <span class="text-xs font-mono font-normal text-stone-400 bg-stone-200/60 px-2 py-0.5 rounded-full">5</span>
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <!-- Node.js -->
+      <div class="bg-stone-100 border border-stone-200/80 hover:border-amber-300 rounded-2xl p-4 transition-all flex flex-col justify-between h-36">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-mono px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 font-medium">Backend</span>
+          <span class="text-xs font-mono text-stone-400">Runtime</span>
+        </div>
+        <div>
+          <h3 class="font-serif font-bold text-stone-900">Node.js & Express</h3>
+          <p class="text-xs text-stone-500 mt-1">Быстрая серверная логика и маршрутизация</p>
+        </div>
+      </div>
+
+      <!-- JWT -->
+      <div class="bg-stone-100 border border-stone-200/80 hover:border-amber-300 rounded-2xl p-4 transition-all flex flex-col justify-between h-36">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-mono px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 font-medium">Auth</span>
+          <span class="text-xs font-mono text-stone-400">Security</span>
+        </div>
+        <div>
+          <h3 class="font-serif font-bold text-stone-900">JWT Tokens</h3>
+          <p class="text-xs text-stone-500 mt-1">Stateless-авторизация и защита сессий</p>
+        </div>
+      </div>
+
+      <!-- Prisma -->
+      <div class="bg-stone-100 border border-stone-200/80 hover:border-amber-300 rounded-2xl p-4 transition-all flex flex-col justify-between h-36">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-mono px-2 py-0.5 rounded-md bg-stone-200 text-stone-700 font-medium">ORM</span>
+          <span class="text-xs font-mono text-stone-400">Data Layer</span>
+        </div>
+        <div>
+          <h3 class="font-serif font-bold text-stone-900">Prisma ORM</h3>
+          <p class="text-xs text-stone-500 mt-1">Строгая типизация схем и миграций БД</p>
+        </div>
+      </div>
+
+      <!-- PostgreSQL -->
+      <div class="bg-stone-100 border border-stone-200/80 hover:border-amber-300 rounded-2xl p-4 transition-all flex flex-col justify-between h-36">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-mono px-2 py-0.5 rounded-md bg-stone-200 text-stone-700 font-medium">Database</span>
+          <span class="text-xs font-mono text-stone-400">SQL</span>
+        </div>
+        <div>
+          <h3 class="font-serif font-bold text-stone-900">PostgreSQL</h3>
+          <p class="text-xs text-stone-500 mt-1">Надежное хранение структуры папок и метаданных</p>
+        </div>
+      </div>
+
+      <!-- Supabase -->
+      <div class="bg-stone-100 border border-stone-200/80 hover:border-amber-300 rounded-2xl p-4 transition-all flex flex-col justify-between h-36">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-mono px-2 py-0.5 rounded-md bg-yellow-100 text-yellow-800 font-medium">Cloud</span>
+          <span class="text-xs font-mono text-stone-400">S3 Bucket</span>
+        </div>
+        <div>
+          <h3 class="font-serif font-bold text-stone-900">Supabase Storage</h3>
+          <p class="text-xs text-stone-500 mt-1">Облачное хранилище физических файлов</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+<%- include('partials/footer') %>
+
+</body>
+</html>

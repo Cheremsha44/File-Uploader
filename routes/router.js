@@ -34,6 +34,10 @@ const { autorized } = require('../middlewares/auth');
 
 router.get('/', mainController.home);
 
+router.get('/about', mainController.about);
+router.get('/contact', mainController.contact);
+router.get('/upgrade', mainController.upgrade);
+
 // authorization\registration\log-out
 router.get('/login', mainController.login);
 router.post('/login', mainController.loginPost);
@@ -42,11 +46,15 @@ router.get('/register', mainController.register);
 router.post('/register', mainController.registerPost);
 
 router.get('/log-out', mainController.logOut);
-// ================================================
+// File==File==File==File==File==File==File==File==File==File==File==File==File==File==
 // Upload files
 router.post('/upload', autorized, upload.single('file'), mainController.upload);
+// Install file
+router.get('/download/:id', autorized, mainController.download);
 // Delete file
 router.post('/delete-file/:id', autorized, mainController.deleteFile);
+router.get('/shared', autorized, mainController.sharedPage);
+router.get('/share/:id', autorized, mainController.shareFile);
 
 // Folder==Folder==Folder==Folder==Folder==Folder==Folder==Folder==Folder==Folder
 // Create folder

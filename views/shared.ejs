@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head', { title: 'about-caravan' }) %>
+<body class="min-h-screen flex flex-col bg-stone-50 text-stone-800 antialiased">
+
+<%- include('partials/header') %>
+<% if (locals.user) {%>
+    <%- include('partials/shared', { files: files }) %>
+<% }else{%>
+    <%- include('partials/sharedLogin') %>
+<% } %>
+<%- include('partials/footer') %>
+
+</body>
+</html>
+
+<script>
+  function copyShareLink(url, btn) {
+    navigator.clipboard.writeText(url);
+    const originalText = btn.innerText;
+    btn.innerText = 'Copied ✓';
+    setTimeout(() => {
+      btn.innerText = originalText;
+    }, 1800);
+  }
+</script>
